@@ -49,9 +49,11 @@ AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
 PRIVACY_LINK = getenv("PRIVACY_LINK", "https://files.catbox.moe/jyeumn.jpg")
 
 #Music Api
-# Dono ko None kar de, taaki bot chupchap khud download kare
+# API band kar rahe hain, par variable rehna zaroori hai
 API_URL = None
 VIDEO_API_URL = None
+API_KEY = None  # <--- Ye line miss ho gayi thi, isko add kar de
+
 
 
 # Get this credentials from https://developer.spotify.com/dashboard
@@ -122,6 +124,7 @@ if SUPPORT_GROUP:
         raise SystemExit(
             "[ERROR] - Your SUPPORT_GROUP url is wrong. Please ensure that it starts with https://"
         )
+
 
 
 
