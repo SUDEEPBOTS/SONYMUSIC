@@ -35,7 +35,7 @@ def cookie_txt_file():
 
 
 async def download_song(link: str):
-    # Setup Video ID and Path
+    # ID Extraction
     try:
         if "v=" in link:
             video_id = link.split('v=')[-1].split('&')[0]
@@ -46,17 +46,18 @@ async def download_song(link: str):
 
     download_folder = "downloads"
     os.makedirs(download_folder, exist_ok=True)
-    file_path = f"{download_folder}/{video_id}.mp3"
 
-    if os.path.exists(file_path):
-        return file_path
+    # 1. Check karo agar file pehle se hai (Kisi bhi extension me)
+    for file in os.listdir(download_folder):
+        if file.startswith(video_id) and os.path.getsize(os.path.join(download_folder, file)) > 0:
+            return os.path.join(download_folder, file)
 
-    # LOCAL DOWNLOAD MODE (API BYPASS)
+    # 2. Local Download Mode
     cookie_file = cookie_txt_file()
     
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': file_path,
+        'outtmpl': f'{download_folder}/%(id)s.%(ext)s', # Extension auto rakhne do
         'geo_bypass': True,
         'nocheckcertificate': True,
         'quiet': True,
@@ -72,7 +73,14 @@ async def download_song(link: str):
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([link])
-        return file_path
+        
+        # 3. Download ke baad file dhoondo (Smart Search)
+        for file in os.listdir(download_folder):
+            if file.startswith(video_id):
+                filepath = os.path.join(download_folder, file)
+                if os.path.getsize(filepath) > 0:
+                    return filepath
+        return None
     except Exception as e:
         print(f"[LOCAL DOWNLOAD FAIL] {e}")
         return None
@@ -89,17 +97,17 @@ async def download_video(link: str):
 
     download_folder = "downloads"
     os.makedirs(download_folder, exist_ok=True)
-    file_path = f"{download_folder}/{video_id}.mp4"
 
-    if os.path.exists(file_path):
-        return file_path
+    # 1. Check existing
+    for file in os.listdir(download_folder):
+        if file.startswith(video_id) and file.endswith((".mp4", ".mkv", ".webm")):
+             return os.path.join(download_folder, file)
         
-    # LOCAL DOWNLOAD MODE (API BYPASS)
     cookie_file = cookie_txt_file()
 
     ydl_opts = {
         'format': 'bestvideo[height<=720]+bestaudio/best[height<=720]',
-        'outtmpl': file_path,
+        'outtmpl': f'{download_folder}/%(id)s.%(ext)s',
         'geo_bypass': True,
         'nocheckcertificate': True,
         'quiet': True,
@@ -110,7 +118,14 @@ async def download_video(link: str):
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([link])
-        return file_path
+        
+        # 2. Smart Search for Video
+        for file in os.listdir(download_folder):
+            if file.startswith(video_id):
+                filepath = os.path.join(download_folder, file)
+                if os.path.getsize(filepath) > 0:
+                    return filepath
+        return None
     except Exception as e:
         print(f"[LOCAL VIDEO DOWNLOAD FAIL] {e}")
         return None
@@ -120,7 +135,7 @@ async def check_file_size(link):
     async def get_format_info(link):
         cookie_file = cookie_txt_file()
         if not cookie_file:
-            print("No cookies found. Cannot check file size.")
+            # print("No cookies found. Cannot check file size.")
             return None
             
         proc = await asyncio.create_subprocess_exec(
@@ -133,7 +148,7 @@ async def check_file_size(link):
         )
         stdout, stderr = await proc.communicate()
         if proc.returncode != 0:
-            print(f'Error:\n{stderr.decode()}')
+            # print(f'Error:\n{stderr.decode()}')
             return None
         return json.loads(stdout.decode())
 
@@ -150,7 +165,7 @@ async def check_file_size(link):
     
     formats = info.get('formats', [])
     if not formats:
-        print("No formats found.")
+        # print("No formats found.")
         return None
     
     total_size = parse_size(formats)
@@ -264,10 +279,10 @@ class YouTubeAPI:
         if "&" in link:
             link = link.split("&")[0]
         
-        # CHANGED: Use Direct Local Download
-        downloaded_file = await download_video(link)
-        if downloaded_file:
-            return 1, downloaded_file
+        # Local Download call
+        fpath = await download_video(link)
+        if fpath:
+            return 1, fpath
         else:
             return 0, "Failed to download video locally"
 
@@ -396,4 +411,4 @@ class YouTubeAPI:
              # Logic for Audio
              fpath = await download_song(link)
              return fpath, True
-            
+
