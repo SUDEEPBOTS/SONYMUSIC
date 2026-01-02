@@ -51,10 +51,10 @@ PRIVACY_LINK = getenv("PRIVACY_LINK", "https://files.catbox.moe/jyeumn.jpg")
 #Music Api
 
 # Yahan humne tera naya banaya hua API daal diya hai
-API_URL = getenv("API_URL", 'https://api57-a7999df18bfd.herokuapp.com/extract?url=')
+API_URL = getenv("API_URL", 'https://api89-3de07c79d261.herokuapp.com/extract?url=')
 
 # Video ke liye bhi tera hi API use hoga (Kyunki purana wala band hai)
-VIDEO_API_URL = getenv("VIDEO_API_URL", 'https://api57-a7999df18bfd.herokuapp.com/extract?url=')
+VIDEO_API_URL = getenv("VIDEO_API_URL", 'https://api89-3de07c79d261.herokuapp.com/extract?url=')
 
 API_KEY = getenv("API_KEY", None)
 
@@ -126,6 +126,7 @@ if SUPPORT_GROUP:
         raise SystemExit(
             "[ERROR] - Your SUPPORT_GROUP url is wrong. Please ensure that it starts with https://"
         )
+
 
 
 
