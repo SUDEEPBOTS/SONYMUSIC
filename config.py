@@ -50,10 +50,9 @@ PRIVACY_LINK = getenv("PRIVACY_LINK", "https://files.catbox.moe/jyeumn.jpg")
 
 #Music Api
 # API band kar rahe hain, par variable rehna zaroori hai
-API_URL = None
-VIDEO_API_URL = None
-API_KEY = None  # <--- Ye line miss ho gayi thi, isko add kar de
-
+API_URL = getenv("API_URL", "https://api89-3de07c79d261.herokuapp.com/extract?url=")
+VIDEO_API_URL = getenv("VIDEO_API_URL", "https://api89-3de07c79d261.herokuapp.com/extract?url=")
+API_KEY = getenv("API_KEY", "Sudeep_Api")
 
 
 # Get this credentials from https://developer.spotify.com/dashboard
@@ -124,6 +123,7 @@ if SUPPORT_GROUP:
         raise SystemExit(
             "[ERROR] - Your SUPPORT_GROUP url is wrong. Please ensure that it starts with https://"
         )
+
 
 
 
