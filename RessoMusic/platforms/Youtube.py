@@ -19,6 +19,11 @@ from config import API_URL, VIDEO_API_URL, API_KEY
 
 
 def cookie_txt_file():
+    # 1. Pehle Bahar (Root) check karega
+    if os.path.exists("cookies.txt"):
+        return "cookies.txt"
+    
+    # 2. Agar wahan nahi mili, toh 'cookies' folder mein dhoondega
     cookie_dir = f"{os.getcwd()}/cookies"
     if not os.path.exists(cookie_dir):
         return None
